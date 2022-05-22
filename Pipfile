@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 python-dotenv = "*"
 "discord.py" = {git = "https://github.com/Rapptz/discord.py.git"}
+validators = "*"
 
 [dev-packages]
 autopep8 = "*"

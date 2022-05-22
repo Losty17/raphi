@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "65f48a8f2346bad50c02be24b6793c41dbbecc667c7c82ed16ee6e74b376e7e2"
+            "sha256": "6cf56f45fb257c38322f080d9eca99cbc098df7105fea61ad1c5f204760cdd4d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -123,8 +123,16 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==2.0.12"
+        },
+        "decorator": {
+            "hashes": [
+                "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330",
+                "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"
+            ],
+            "markers": "python_version >= '3.5'",
+            "version": "==5.1.1"
         },
         "discord-py": {
             "git": "https://github.com/Rapptz/discord.py.git",
@@ -203,7 +211,7 @@
                 "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff",
                 "sha256:9d643ff0a55b762d5cdb124b8eaa99c66322e2157b69160bc32796e824360e6d"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==3.3"
         },
         "multidict": {
@@ -278,6 +286,13 @@
             ],
             "index": "pypi",
             "version": "==0.20.0"
+        },
+        "validators": {
+            "hashes": [
+                "sha256:dec45f4381f042f1e705cfa74949505b77f1e27e8b05409096fee8152c839cbe"
+            ],
+            "index": "pypi",
+            "version": "==0.19.0"
         },
         "yarl": {
             "hashes": [
@@ -380,7 +395,7 @@
                 "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b",
                 "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
             ],
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.10.2"
         }
     }
