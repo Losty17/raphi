@@ -3,7 +3,6 @@ from pathlib import Path
 from traceback import print_exc
 from typing import List
 
-import discord
 from discord import Intents, Object
 from discord.ext import commands
 
@@ -11,6 +10,7 @@ from discord.ext import commands
 class Raphi(commands.Bot):
     package = 'raphi'
     ext_dir = 'extensions'
+    root_dir = Path(__file__).parent.resolve()
 
     def __init__(self, command_prefix: str, *, intents: Intents, application_id: int) -> None:
         super().__init__(
@@ -23,7 +23,8 @@ class Raphi(commands.Bot):
 
         self.glds = [
             Object(id=getenv("UDYR")),
-            Object(id=getenv("TAVERN"))
+            Object(id=getenv("TAVERN")),
+            Object(id=getenv("DINASTIA"))
         ]
 
     async def setup_hook(self) -> None:
@@ -58,7 +59,7 @@ class Raphi(commands.Bot):
         """
         file_list = listdir(
             path.join(
-                Path(__file__).parent.resolve(),
+                self.root_dir,
                 directory
             )
         )
