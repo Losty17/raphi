@@ -14,11 +14,7 @@ class Errors(commands.Cog):
 
         self.bot.tree.on_error = self.on_app_command_error
 
-    async def on_app_command_error(
-        self,
-        interaction: Interaction,
-        error: AppCommandError
-    ):
+    async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
         await self.handle_error(interaction, error)
 
     @commands.Cog.listener()
