@@ -24,7 +24,6 @@ class Raphi(commands.Bot):
         self.glds = [
             Object(id=getenv("UDYR")),
             Object(id=getenv("TAVERN")),
-            Object(id=getenv("DINASTIA"))
         ]
 
     async def setup_hook(self) -> None:
@@ -33,6 +32,7 @@ class Raphi(commands.Bot):
         for g in self.glds:
             self.tree.copy_global_to(guild=g)
             await self.tree.sync(guild=g)
+            # await self.tree.sync()
 
     async def load_modules(self, extensions: List[str]):
         """Loads the specified extensions
