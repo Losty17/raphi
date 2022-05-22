@@ -10,6 +10,7 @@ load_dotenv()
 
 intents = Intents.default()
 
-bot = Raphi("", intents=intents, application_id=getenv("APP_ID"))
+bot = Raphi("", intents=intents, application_id=getenv(
+    "APP_ID"), owner_id=getenv("OWNER_ID"))
 
 bot.run(getenv("BOT_TOKEN"))

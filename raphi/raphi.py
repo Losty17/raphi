@@ -12,12 +12,14 @@ class Raphi(commands.Bot):
     ext_dir = 'extensions'
     root_dir = Path(__file__).parent.resolve()
 
-    def __init__(self, command_prefix: str, *, intents: Intents, application_id: int) -> None:
+    def __init__(self, command_prefix: str, *, intents: Intents, application_id: int, owner_id: int) -> None:
         super().__init__(
             command_prefix,
             intents=intents,
-            application_id=application_id
+            application_id=application_id,
         )
+
+        self.owner_id = int(owner_id)
 
         self.ext = self.get_extensions(self.ext_dir)
 
@@ -30,6 +32,7 @@ class Raphi(commands.Bot):
         await self.load_modules(self.ext)
 
         for g in self.glds:
+            # self.tree.clear_commands(guild=None)
             self.tree.copy_global_to(guild=g)
             await self.tree.sync(guild=g)
             # await self.tree.sync()
