@@ -5,7 +5,7 @@ from time import monotonic
 from discord import Interaction, app_commands
 from discord.ext import commands
 from raphi.raphi import Raphi
-from raphi.views.link import AuthorLinks, Counter
+from raphi.views.link import AuthorLinks, Counter, LinkButton
 
 
 class Text(commands.Cog):
@@ -74,7 +74,7 @@ class Text(commands.Cog):
 
     @app_commands.command()
     async def author(self, interaction: Interaction):
-        """ Author info """
+        """ Raphi's creator social media """
         author_info = {
             "Github": "https://kappke.tech/github",
             "Twitter": "https://twitter.com/yts0l",
@@ -84,6 +84,11 @@ class Text(commands.Cog):
         }
 
         await interaction.response.send_message(view=AuthorLinks(author_info))
+
+    @app_commands.command()
+    async def github(self, interaction: Interaction):
+        """ Raphi's Github Repository """
+        await interaction.response.send_message(view=LinkButton("Github Repository", "https://github.com/losty17/raphi"))
 
     @app_commands.command()
     async def counter(self, interaction: Interaction):
