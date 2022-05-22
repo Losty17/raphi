@@ -1,0 +1,19 @@
+{
+  "Create Cog": {
+    "scope": "python",
+    "prefix": "cog",
+    "body": [
+      "import discord",
+      "from discord import app_commands",
+      "from discord.ext import commands",
+      "from raphi.raphi import Raphi",
+      "\n\n",
+      "class $1(commands.Cog):",
+      "\tdef __init__(self, bot: Raphi) -> None:",
+      "\t\tself.bot = bot",
+      "\n\n",
+      "async def setup(bot: commands.Bot) -> None:",
+      "\tawait bot.add_cog($1(bot))"
+    ]
+  }
+}
