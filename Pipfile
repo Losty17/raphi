@@ -7,6 +7,8 @@ name = "pypi"
 python-dotenv = "*"
 "discord.py" = {git = "https://github.com/Rapptz/discord.py.git"}
 validators = "*"
+pynacl = "*"
+youtube-dl = "*"
 
 [dev-packages]
 autopep8 = "*"

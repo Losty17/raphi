@@ -1,5 +1,4 @@
-from socket import timeout
-from traceback import format_exception
+from traceback import format_exception, print_exception
 
 import discord
 from discord import Interaction, app_commands
@@ -21,6 +20,10 @@ class Errors(commands.Cog):
     async def on_command_error(self, ctx: commands.Context, error: Exception):
         await self.handle_error(ctx, error)
 
+    @commands.Cog.listener()
+    async def on_error(self, ctx: commands.Context, error: Exception):
+        await self.handle_error(ctx, error)
+
     async def handle_error(self, ctx: commands.Context | Interaction, error: Exception | AppCommandError):
         """Dynamic error handler for `app_commands` and `ext.commands`
 
@@ -28,8 +31,8 @@ class Errors(commands.Cog):
             ctx (`commands.Context` | `discord.Interaction`): error source
             error (`Exception` | `AppCommandError`): error object
         """
-        handle_origin = type(ctx)
-        user = ctx.author if handle_origin == commands.Context else ctx.user
+        origin = type(ctx)
+        user = ctx.author if origin == commands.Context else ctx.user
 
         # Select the right display message, or skip displaying one
         match type(error):
@@ -38,6 +41,12 @@ class Errors(commands.Cog):
 
             case app_commands.errors.CommandNotFound | discord.errors.NotFound:
                 emsg = "Não consegui interpretar sua solicitação"
+
+            case app_commands.errors.CheckFailure:
+                return await ctx.response.send_message("Você não possui permissão para usar esse comando!", ephemeral=True)
+
+            case app_commands.errors.CommandInvokeError:
+                emsg = f"`{error}`"
 
             case _:
                 emsg = f"Erro não tratado: `{type(error)}`"
@@ -55,11 +64,19 @@ class Errors(commands.Cog):
         msg = f"Ops, algo deu errado! {emsg} {traceback if traceback else ''}"
 
         # Send the message the right way
-        if (handle_origin == commands.Context):
-            # Simulate an ephemeral message
-            await ctx.send(msg, delete_after=15)
-        else:
-            await ctx.response.send_message(msg, ephemeral=True)
+        async def send_message(handle_origin, msg: str):
+            if (handle_origin == commands.Context):
+                # Simulate an ephemeral message
+                await ctx.send(msg, delete_after=15)
+            else:
+                await ctx.response.send_message(msg, ephemeral=True)
+
+        try:
+            await send_message(origin, msg)
+        except discord.errors.HTTPException as e:
+            await send_message(
+                origin, f"Ops, algo deu errado! {emsg}\n\nVerifique o console: `{type(error)}`")
+            print_exception(error, value=error, tb=error.__traceback__)
 
 
 async def setup(bot: commands.Bot) -> None:
