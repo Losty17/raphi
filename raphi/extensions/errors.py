@@ -20,6 +20,10 @@ class Errors(commands.Cog):
     async def on_command_error(self, ctx: commands.Context, error: Exception):
         await self.handle_error(ctx, error)
 
+    @commands.Cog.listener()
+    async def on_error(self, ctx: commands.Context, error: Exception):
+        await self.handle_error(ctx, error)
+
     async def handle_error(self, ctx: commands.Context | Interaction, error: Exception | AppCommandError):
         """Dynamic error handler for `app_commands` and `ext.commands`
 

@@ -41,9 +41,10 @@ class Core(commands.Cog):
         fqn = f'{self.bot.package}{module}'
 
         try:
-            print("Loading extension...", end=" ")
+            print(f"Loading extension {fqn}...", end=" ")
             await self.bot.load_extension(module, package=self.bot.package)
             print("Ok!")
+            await self.bot.sync()
         except commands.ExtensionError:
             await interaction.response.send_message(
                 f"Não foi possível carregar o módulo `{fqn}`",
@@ -62,9 +63,10 @@ class Core(commands.Cog):
         fqn = f'{self.bot.package}{module}'
 
         try:
-            print("Unloading extension...", end=" ")
+            print(f"Unloading extension {fqn}...", end=" ")
             await self.bot.unload_extension(module, package=self.bot.package)
             print("Ok!")
+            await self.bot.sync()
         except commands.ExtensionError:
             await interaction.response.send_message(
                 f"Não foi possível descarregar o módulo `{fqn}`",
@@ -82,9 +84,10 @@ class Core(commands.Cog):
 
         fqn = f'{self.bot.package}{module}'
         try:
-            print("Reloading extension...", end=" ")
+            print(f"Reloading extension {fqn}...", end=" ")
             await self.bot.reload_extension(module, package=self.bot.package)
             print("Ok!")
+            await self.bot.sync()
         except commands.ExtensionError:
             await interaction.response.send_message(
                 f"Não foi possível recarregar o módulo `{fqn}`",
