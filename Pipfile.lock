@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "536d8b0b4b7919e087dc77fe2bf495dc4346b607f72ec11a16404a659d047c9f"
+            "sha256": "dd70cd8b1d45bc708c0636942272e1600b71413f5ced27efbd7cc369104a0360"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -191,10 +191,17 @@
         },
         "discord-py": {
             "git": "https://github.com/Rapptz/discord.py.git",
-            "ref": "e2d0193531f3ab52da551582f5ef9044d14fe3ca"
+            "ref": "77baa06a99b00b50d24398714bce40fcda1fa0c2"
         },
         "discord.py": {
             "git": "https://github.com/Rapptz/discord.py.git"
+        },
+        "ffmpeg": {
+            "hashes": [
+                "sha256:6931692c890ff21d39938433c2189747815dca0c60ddc7f9bb97f199dba0b5b9"
+            ],
+            "index": "pypi",
+            "version": "==1.4"
         },
         "frozenlist": {
             "hashes": [

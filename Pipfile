@@ -9,6 +9,7 @@ python-dotenv = "*"
 validators = "*"
 pynacl = "*"
 youtube-dl = "*"
+ffmpeg = "*"
 
 [dev-packages]
 autopep8 = "*"
