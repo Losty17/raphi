@@ -10,6 +10,7 @@ validators = "*"
 pynacl = "*"
 youtube-dl = "*"
 ffmpeg = "*"
+requests = "*"
 
 [dev-packages]
 autopep8 = "*"

@@ -1,125 +1,297 @@
-from typing import Dict
-import discord
-import youtube_dl
 import asyncio
-import discord.opus as opus
-from discord import Interaction, VoiceClient, app_commands
+from collections import namedtuple
+
+import discord
+import requests
+import youtube_dl
 from discord.ext import commands
 from raphi.raphi import Raphi
 
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    # bind to ipv4 since ipv6 addresses cause issues sometimes
-    'source_address': '0.0.0.0',
-}
-
-ffmpeg_options = {
-    'options': '-vn',
-}
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+FFMPEG_OPTIONS = {
+    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
 
-class YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=0.5):
-        super().__init__(source, volume)
+class Queue:
+    """
+    A class used to represent a queue.
+    This class handles all sort of Queue operations, making it easy to just
+    call these methods in main.py without worrying about breaking anything in queue.
+    Attributes
+    ----------
+    current_music_url : str
+        The current url of the current music the bot is playing.
+    current_music_title : str
+        The current name of the current music the bot is playing.
+    current_music_thumb : str
+        The current thumbnail url of the current music the bot is playing.
+    last_title_enqueued : str
+        The title of the last music enqueued.
+    queue : tuple list
+        The actual queue of songs to play.
+        (title, url, thumb)
+    Methods
+    -------
+    enqueue(music_title, music_url, music_thumb)
+        Handles enqueue process appending the music tuple to the queue
+        while setting last_title_enqueued and the current_music variables as needed
+    dequeue()
+        TO DO!
+        Removes the last music enqueued from the queue.
+    previous()
+        Goes back one place in queue, ensuring that the previous song isn't a negative index.
+        current_music variables are set accordingly.
+    next()
+        Sets the next music in the queue as the current one.
+    theres_next()
+        Checks if there is a music in the queue after the current one.
+    clear_queue()
+        Clears the queue, resetting all variables.
+    """
 
-        self.data = data
+    def __init__(self):
+        self.music = namedtuple('music', ('title', 'url', 'thumb'))
+        self.current_music = self.music('', '', '')
 
-        self.title = data.get('title')
-        self.url = data.get('url')
+        self.last_title_enqueued = ''
+        self.queue = []
 
-    @classmethod
-    async def from_url(cls, url, *, loop=None, stream=False):
-        loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+    def set_last_as_current(self):
+        """
+        Sets last music as current.
+        :return: None
+        """
+        index = len(self.queue) - 1
+        if index >= 0:
+            self.current_music = self.queue[index]
 
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
+    def enqueue(self, music_title, music_url, music_thumb):
+        """
+        Handles enqueue process appending the music tuple to the queue
+        while setting last_title_enqueued and the current_music variables as needed
+        :param music_title: str
+            The music title to be added to queue
+        :param music_url: str
+            The music url to be added to queue
+        :param music_thumb: str
+            The music thumbnail url to be added to queue
+        :return: None
+        """
+        if len(self.queue) > 0:
+            self.queue.append(self.music(music_title, music_url, music_thumb))
+        else:
+            self.queue.append(self.music(music_title, music_url, music_thumb))
+            self.current_music = self.music(
+                music_title, music_url, music_thumb)
 
-        filename = data['url'] if stream else ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+    def dequeue(self):
+        pass
+        # if self.queue:
+        #     self.queue.pop(len(self.queue)-1)
+
+    def previous(self):
+        """
+        Goes back one place in queue, ensuring that the previous song isn't a negative index.
+        current_music variables are set accordingly.
+        :return: None
+        """
+        index = self.queue.index(self.current_music) - 1
+        if index > 0:
+            self.current_music = self.queue[index]
+
+    def next(self):
+        """
+        Sets the next music in the queue as the current one.
+        :return: None
+        """
+        if self.current_music in self.queue:
+            index = self.queue.index(self.current_music) + 1
+            if len(self.queue) - 1 >= index:
+                if self.current_music.title == self.queue[index].title and len(self.queue) - 1 > index + 1:
+                    self.current_music = self.queue[index + 1]
+                else:
+                    self.current_music = self.queue[index]
+
+        else:
+            self.clear_queue()
+
+    def theres_next(self):
+        """
+        Checks if there is a music in the queue after the current one.
+        :return: bool
+            True if there is a next song in queue.
+            False if there isn't a next song in queue.
+        """
+        if self.queue.index(self.current_music) + 1 > len(self.queue) - 1:
+            return False
+        else:
+            return True
+
+    def clear_queue(self):
+        """
+        Clears the queue, resetting all variables.
+        :return: None
+        """
+        self.queue.clear()
+        self.current_music = self.music('', '', '')
 
 
-class Music(commands.GroupCog, name="music", description="Music commands"):
+class Session:
+    """
+    A class used to represent an instance of the bot.
+    To avoid mixed queues when there's more than just one guild sending commands to the bot, I came up with the concept
+    of sessions. Each session is identified by its guild and voice channel where the bot is connected playing audio, so
+    it's impossible to send a music from one guild to another by mistake. :)
+    Attributes
+    ----------
+    id : int
+        Session's number ID.
+    guild : str
+        Guild's name where the bot is connected.
+    channel : str
+        Voice channel where the bot is connected.
+    """
+
+    def __init__(self, guild, channel, id=0):
+        """
+        :param guild: str
+             Guild's name where the bot is connected.
+        :param channel: str
+            Voice channel where the bot is connected.
+        :param id: int
+            Session's number ID.
+        """
+        self.id = id
+        self.guild = guild
+        self.channel = channel
+        self.q = Queue()
+
+
+class Music(commands.Cog):
     def __init__(self, bot: Raphi) -> None:
         self.bot = bot
 
-        self.queue: Dict[str, str] = {}
+        self.sessions = []
 
-    @app_commands.command()
-    async def play(self, interaction: Interaction, *, url: str):
-        """Plays from a url (almost anything youtube_dl supports)"""
-        voice_client = await self.get_connection(interaction)
-        if not voice_client:
-            return await interaction.response.send_message("Já estou tocando música em outro canal", ephemeral=True)
-
-        await interaction.response.defer(thinking=True)
-
-        player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-
-        if not voice_client.is_playing():
-            voice_client.play(player, after=self.play_next)
-            await interaction.followup.send(content=f'Now playing: {player.title}')
-        else:
-            self.queue[player.title] = player.url
-            await interaction.followup.send(content=f'Added to queue: {player.title}')
-
-    @app_commands.command()
-    async def queue(self, interaction: Interaction):
-        await interaction.response.send_message('Queue:\n- ' + '\n- '.join(self.queue))
-
-    @app_commands.command()
-    async def disconnect(self, interaction: Interaction):
-        try:
-            await self.connection.disconnect()
-            self.connection = None
-        except:
-            msg = 'Not connected'
-        else:
-            msg = 'Sucessfully disconnected'
-
-        await interaction.response.send_message(msg, ephemeral=True)
-
-    async def get_connection(self, interaction: Interaction) -> VoiceClient | None:
-        """Must be called before every voice command
-
-        Args:
-            interaction (Interaction): the target interaction
-
-        Returns:
-            VoiceClient: the voice client
+    def _check_session(self, ctx):
         """
-        member = await interaction.guild.fetch_member(self.bot.user.id)
+        Checks if there is a session with the same characteristics (guild and channel) as ctx param.
+        :param ctx: discord.ext.commands.Context
+        :return: session()
+        """
+        if len(self.sessions) > 0:
+            for i in self.sessions:
+                if i.guild == ctx.guild and i.channel == ctx.author.voice.channel:
+                    return i
+            session = Session(
+                ctx.guild, ctx.author.voice.channel, id=len(self.sessions))
+            self.sessions.append(session)
+            return session
+        else:
+            session = Session(
+                ctx.guild, ctx.author.voice.channel, id=0)
+            self.sessions.append(session)
+            return session
 
-        self.connection = discord.utils.get(
-            self.bot.voice_clients, guild=interaction.guild
-        ) or await interaction.user.voice.channel.connect(self_deaf=True)
+    def _prepare_continue_queue(self, ctx):
+        """
+        Used to call next song in queue.
+        Because lambda functions cannot call async functions, I found this workaround in discord's api documentation
+        to let me continue playing the queue when the current song ends.
+        :param ctx: discord.ext.commands.Context
+        :return: None
+        """
+        fut = asyncio.run_coroutine_threadsafe(
+            self._continue_queue(ctx), self.bot.loop)
+        try:
+            fut.result()
+        except Exception as e:
+            print(e)
 
-        if not member.voice.deaf:
-            await member.edit(deafen=True)
+    async def _continue_queue(self, ctx):
+        """
+        Check if there is a next in queue then proceeds to play the next song in queue.
+        As you can see, in this method we create a recursive loop using the prepare_continue_queue to make sure we pass
+        through all songs in queue without any mistakes or interaction.
+        :param ctx: discord.ext.commands.Context
+        :return: None
+        """
+        session = self._check_session(ctx)
+        if not session.q.theres_next():
+            await ctx.send("Acabou a queue, brother.")
+            return
 
-        if self.connection.channel != member.voice.channel:
-            return None
+        session.q.next()
 
-        # if not opus.is_loaded():
-        #     opus.load_opus()
+        voice = discord.utils.get(self.bot.voice_clients, guild=session.guild)
+        source = await discord.FFmpegOpusAudio.from_probe(session.q.current_music.url, **FFMPEG_OPTIONS)
 
-        return self.connection
+        if voice.is_playing():
+            voice.stop()
 
-    def play_next(self, e: Exception | None):
-        self.connection = self.bot.loop.run_until_complete(
-            self.connection.disconnect())
+        voice.play(source, after=lambda e: self._prepare_continue_queue(ctx))
+        await ctx.send(session.q.current_music.thumb)
+        await ctx.send(f"Tocando agora: {session.q.current_music.title}")
+
+    @commands.hybrid_command(name='play')
+    async def _play(self, ctx, *, arg):
+        """
+        Checks where the command's author is, searches for the music required, joins the same channel as the command's
+        author and then plays the audio directly from YouTube.
+        :param ctx: discord.ext.commands.Context
+        :param arg: str
+            arg can be url to video on YouTube or just as you would search it normally.
+        :return: None
+        """
+        try:
+            voice_channel = ctx.author.voice.channel
+
+        # If command's author isn't connected, return.
+        except AttributeError as e:
+            print(e)
+            await ctx.send("Tu não tá conectado num canal de voz, burro")
+            return
+
+        # Finds author's session.
+        session = self._check_session(ctx)
+
+        # Searches for the video
+        with youtube_dl.YoutubeDL({'format': 'bestaudio', 'noplaylist': 'True'}) as ydl:
+            try:
+                requests.get(arg)
+            except Exception as e:
+                print(e)
+                info = ydl.extract_info(f"ytsearch:{arg}", download=False)[
+                    'entries'][0]
+            else:
+                info = ydl.extract_info(arg, download=False)
+
+        url = info['formats'][0]['url']
+        thumb = info['thumbnails'][0]['url']
+        title = info['title']
+
+        session.q.enqueue(title, url, thumb)
+
+        # Finds an available voice client for the bot.
+        voice = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
+        if not voice:
+            await voice_channel.connect()
+            voice = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
+
+        # If it is already playing something, adds to the queue
+        if voice.is_playing():
+            await ctx.send(thumb)
+            await ctx.send(f"Adicionado à queue: {title}")
+            return
+        else:
+            await ctx.send(thumb)
+            await ctx.send(f"Tocando agora: {title}")
+
+            # Guarantees that the requested music is the current music.
+            session.q.set_last_as_current()
+
+            source = await discord.FFmpegOpusAudio.from_probe(url, **FFMPEG_OPTIONS)
+            voice.play(
+                source, after=lambda e: self._prepare_continue_queue(ctx))
 
 
 async def setup(bot: commands.Bot) -> None:
