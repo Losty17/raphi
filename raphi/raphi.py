@@ -12,6 +12,7 @@ class Raphi(commands.Bot):
     package = 'raphi'
     ext_dir = 'extensions'
     root_dir = Path(__file__).parent.resolve()
+    res_dir = path.join(root_dir, 'res')
 
     def __init__(self, command_prefix: str, *, intents: Intents, application_id: int, owner_id: int) -> None:
         super().__init__(
