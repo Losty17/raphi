@@ -1,11 +1,14 @@
 import json
+import os
 from random import choice, shuffle
 from typing import Dict, List, Optional
+
+# import db
 import discord
-import os
 from discord import app_commands
 from discord.ext import commands
 from raphi.raphi import Raphi
+from raphi import db
 
 
 class Question:
@@ -76,6 +79,13 @@ class Comp(commands.Cog):
 
         if question:
             await interaction.response.send_message(content=content, view=QuestionUi(question))
+
+    @app_commands.command(name="testdb")
+    async def _test_db(self, interaction: discord.Interaction):
+        """ Testa o banco de dados """
+        database = db.Database()
+
+        database.sync()
 
 
 async def setup(bot: commands.Bot) -> None:
