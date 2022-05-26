@@ -28,6 +28,7 @@ class Raphi(commands.Bot):
         self.glds = [
             Object(id=getenv("UDYR")),
             Object(id=getenv("TAVERN")),
+            Object(id=getenv("KODY")),
         ]
 
     async def setup_hook(self) -> None:

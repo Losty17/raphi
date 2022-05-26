@@ -3,9 +3,15 @@ from random import choice, shuffle
 from typing import Dict, List, Optional
 import discord
 import os
-from discord import app_commands
+from discord import Object, app_commands, Interaction
 from discord.ext import commands
 from raphi.raphi import Raphi
+
+
+def check_permission():
+    def predicate(interaction: Interaction) -> bool:
+        return interaction.guild.id == 501807001324617748 and interaction.channel.id == 979441373046521937
+    return app_commands.check(predicate)
 
 
 class Question:
