@@ -11,6 +11,7 @@ pynacl = "*"
 youtube-dl = "*"
 ffmpeg = "*"
 requests = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 autopep8 = "*"
