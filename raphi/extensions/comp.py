@@ -5,12 +5,8 @@ from typing import Dict, List, Optional
 
 # import db
 import discord
-<<<<<<< HEAD
 import os
 from discord import Object, app_commands, Interaction
-=======
-from discord import app_commands
->>>>>>> 044b980774382fecd61d1aa0f16a51945dc2eb5a
 from discord.ext import commands
 from raphi.raphi import Raphi
 from raphi import db
