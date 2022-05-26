@@ -33,15 +33,20 @@ class QuestionButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction) -> None:
         if (self.ans == self.right_ans):
             self.style = discord.ButtonStyle.green
-            for btn in self.buttons:
-                btn.disabled = True
+            msg = "Você acertou!"
+        else:
+            self.style = discord.ButtonStyle.red
+            msg = "Você errou..."
 
-            await interaction.response.edit_message(content="Correto!", view=self._view)
+        for btn in self.buttons:
+            btn.disabled = True
+
+        await interaction.response.edit_message(content=msg, view=self._view)
 
 
 class QuestionUi(discord.ui.View):
-    def __init__(self, question: Question, *, timeout: Optional[float] = 180):
-        super().__init__(timeout=timeout)
+    def __init__(self, question: Question):
+        super().__init__(timeout=60)
         self.question = question
         shuffle(self.question.answers)
         right_ans = self.question.right_answer
@@ -66,6 +71,7 @@ class Comp(commands.Cog):
             self.questions: List[Dict] = json.loads(file.read())
 
     @app_commands.command(name="question")
+    @app_commands.checks.cooldown(1, 30.0, key=lambda i: (i.guild_id, i.user.id))
     async def _question_command(self, interaction: discord.Interaction):
         """ Responda uma perguntinha! """
         question = choice(self.questions)
@@ -78,7 +84,13 @@ class Comp(commands.Cog):
         question = Question.get_question(answers, right_answer, content)
 
         if question:
-            await interaction.response.send_message(content=content, view=QuestionUi(question))
+            await interaction.response.send_message(content=content, view=QuestionUi(question), ephemeral=True)
+
+    @_question_command.error
+    async def _on_question_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+        if isinstance(error, app_commands.CommandOnCooldown):
+            await interaction.response.send_message(f'Você já respondeu uma pergunta, tente novamente em {int(round(error.retry_after, 0))}s', ephemeral=True)
+            return
 
     @app_commands.command(name="testdb")
     async def _test_db(self, interaction: discord.Interaction):

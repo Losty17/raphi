@@ -48,6 +48,9 @@ class Errors(commands.Cog):
             case app_commands.errors.CommandInvokeError:
                 emsg = f"`{error}`"
 
+            case app_commands.errors.CommandOnCooldown:
+                return
+
             case _:
                 emsg = f"Erro não tratado: `{type(error)}`"
 
