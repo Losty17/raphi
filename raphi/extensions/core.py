@@ -12,7 +12,8 @@ class Core(commands.Cog):
         description="Developer commands",
         guild_ids=[
             int(getenv("TAVERN")),
-            int(getenv("UDYR"))
+            int(getenv("UDYR")),
+            int(getenv("KODY")),
         ]
     )
 

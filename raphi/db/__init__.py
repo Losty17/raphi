@@ -7,4 +7,5 @@ class Database:
         self.engine = create_engine('sqlite:///data.db', echo=True)
 
     def sync(self):
-        Base.metadata.create_all(self.engine)
+        Quest.metadata.create_all(self.engine)
+        Usr.metadata.create_all(self.engine)

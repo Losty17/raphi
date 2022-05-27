@@ -91,7 +91,7 @@ class Comp(commands.Cog):
         question = Question.get_question(answers, right_answer, content)
 
         if question:
-            await interaction.response.send_message(content=content, view=QuestionUi(question), ephemeral=True)
+            await interaction.response.send_message(content=content, view=QuestionUi(question))
 
     @_question_command.error
     async def _on_question_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
