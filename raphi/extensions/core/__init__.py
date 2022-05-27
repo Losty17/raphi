@@ -3,7 +3,7 @@ import discord
 from discord import Interaction, app_commands
 from discord.ext import commands
 from raphi.raphi import Raphi
-from ..utils.checks import is_owner
+from ...utils.checks import is_owner
 
 
 class Core(commands.Cog):

@@ -3,13 +3,12 @@ import os
 from random import choice, shuffle
 from typing import Dict, List, Optional
 
-# import db
 import discord
-import os
-from discord import Object, app_commands, Interaction
+from discord import Interaction, Object, app_commands
 from discord.ext import commands
+# from raphi import db
 from raphi.raphi import Raphi
-from raphi import db
+from .db import Database
 
 
 def check_permission():
@@ -102,7 +101,7 @@ class Comp(commands.Cog):
     @app_commands.command(name="testdb")
     async def _test_db(self, interaction: discord.Interaction):
         """ Testa o banco de dados """
-        database = db.Database()
+        database = Database()
 
         database.sync()
 

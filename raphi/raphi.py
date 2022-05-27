@@ -67,7 +67,7 @@ class Raphi(commands.Bot):
             )
         )
 
-        return [f'.{directory}.{e[:-3]}' for e in file_list if e.endswith('.py')]
+        return [f'.{directory}.{e}' for e in file_list if not e.endswith('__') and not e.endswith('.md')]
 
     async def sync(self) -> None:
         """ Sync the commands to the specified guilds """
