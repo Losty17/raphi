@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0facf53939f29a205a3c3c51ee2087e3473509630c81bbb9c2c0c057d0d16495"
+            "sha256": "5dcaaa0d81e16efc4e90da2ca504cea73f211726cf347467d1675fcfe4f24ab2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -102,6 +102,14 @@
             "markers": "python_version >= '3.6'",
             "version": "==1.2.0"
         },
+        "aiosqlite": {
+            "hashes": [
+                "sha256:6c49dc6d3405929b1d08eeccc72306d3677503cc5e5e43771efc1e00232e8231",
+                "sha256:f0e6acc24bc4864149267ac82fb46dfb3be4455f99fe21df82609cc6e6baee51"
+            ],
+            "index": "pypi",
+            "version": "==0.17.0"
+        },
         "async-timeout": {
             "hashes": [
                 "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15",
@@ -199,7 +207,7 @@
         },
         "discord-py": {
             "git": "https://github.com/Rapptz/discord.py.git",
-            "ref": "081f483a0d45f86c56993f281a72495316e299b0"
+            "ref": "dc8aef7e6aadaaec81d3e31a64840f60ec8425ee"
         },
         "discord.py": {
             "git": "https://github.com/Rapptz/discord.py.git"
@@ -490,6 +498,14 @@
             ],
             "index": "pypi",
             "version": "==1.4.36"
+        },
+        "typing-extensions": {
+            "hashes": [
+                "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708",
+                "sha256:f1c24655a0da0d1b67f07e17a5e6b2a105894e6824b92096378bb3668ef02376"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==4.2.0"
         },
         "urllib3": {
             "hashes": [

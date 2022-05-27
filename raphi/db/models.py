@@ -1,33 +1,34 @@
 import sqlalchemy
 import enum
+from typing import Final
 from sqlalchemy import Column, Integer, String, Enum, DateTime
 from sqlalchemy.orm import declarative_base
 
-Quest = declarative_base()
-Usr = declarative_base()
+Base = declarative_base()
 
 
 class VipEnum(enum.Enum):
-    none = 0
-    mega = 1
-    giga = 2
-    tera = 3
+    NONE = 0
+    ONCE = 1
+    MEGA = 2
+    GIGA = 3
+    TERA = 4
 
 
 class NodeEnum(enum.Enum):
-    web = 0
-    data = 1
-    design = 2
-    coding = 3
-    network = 4
-    robotics = 5
-    hardware = 6
-    software = 7
+    WEB = 0
+    DATA = 1
+    DESIGN = 2
+    CODING = 3
+    NETWORK = 4
+    ROBOTICS = 5
+    HARDWARE = 6
+    SOFTWARE = 7
 
 
-class User(Usr):
+class User(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True, unique=True)
+    id = Column(Integer, primary_key=True)
 
     web_bits = Column(Integer, default=0)
     data_bits = Column(Integer, default=0)
@@ -38,7 +39,7 @@ class User(Usr):
     hardware_bits = Column(Integer, default=0)
     software_bits = Column(Integer, default=0)
 
-    vip = Column(Enum(VipEnum), default=VipEnum.none)
+    vip = Column(Enum(VipEnum), default=VipEnum.NONE)
 
     last_vote = Column(DateTime)
 
@@ -46,9 +47,9 @@ class User(Usr):
         return f"<User id={self.id}>"
 
 
-class Question(Quest):
+class Question(Base):
     __tablename__ = 'questions'
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement='ignore_fk')
 
     node = Column(Enum(NodeEnum))
     text = Column(String(200))

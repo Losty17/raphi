@@ -106,6 +106,12 @@ class Comp(commands.Cog):
 
         database.sync()
 
+        database.create_user(interaction.user.id)
+
+        user = database.get_user(interaction.user.id)
+
+        await interaction.response.send_message(user, ephemeral=True)
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Comp(bot))

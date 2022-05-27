@@ -12,6 +12,7 @@ youtube-dl = "*"
 ffmpeg = "*"
 requests = "*"
 sqlalchemy = "*"
+aiosqlite = "*"
 
 [dev-packages]
 autopep8 = "*"
