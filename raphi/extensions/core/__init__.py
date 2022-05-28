@@ -2,8 +2,8 @@ from os import getenv
 import discord
 from discord import Interaction, app_commands
 from discord.ext import commands
-from raphi.raphi import Raphi
-from ...utils.checks import is_owner
+from raphi.raphi import Raphi, guilds
+from raphi.utils.checks import is_owner
 
 
 class Core(commands.Cog):
@@ -11,9 +11,9 @@ class Core(commands.Cog):
         name="dev",
         description="Developer commands",
         guild_ids=[
-            int(getenv("TAVERN")),
-            int(getenv("UDYR")),
-            int(getenv("KODY")),
+            guilds[0].id,
+            guilds[1].id,
+            guilds[2].id,
         ]
     )
 

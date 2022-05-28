@@ -2,19 +2,19 @@ import enum
 
 
 class VipEnum(enum.Enum):
-    NONE = 0
-    ONCE = 1
-    MEGA = 2
-    GIGA = 3
-    TERA = 4
+    none = "none"
+    once = "once"
+    mega = "mega"
+    giga = "giga"
+    tera = "tera"
 
 
 class NodeEnum(enum.Enum):
-    WEB = 0
-    DATA = 1
-    DESIGN = 2
-    CODING = 3
-    NETWORK = 4
-    ROBOTICS = 5
-    HARDWARE = 6
-    SOFTWARE = 7
+    web = "web"
+    data = "data"
+    design = "design"
+    coding = "coding"
+    network = "network"
+    robotics = "robotics"
+    hardware = "hardware"
+    software = "software"

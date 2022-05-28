@@ -6,6 +6,7 @@ from typing import Dict, List
 import discord
 from discord import Interaction, app_commands
 from discord.ext import commands
+from raphi.extensions.kody.db.models.enums import NodeEnum
 from raphi.raphi import Raphi
 from .question import Question
 from .views import QuestionUi
@@ -62,7 +63,13 @@ class Kody(commands.Cog):
 
         user = database.get_user(interaction.user.id)
 
-        await interaction.response.send_message(user, ephemeral=True)
+        for i in range(9):
+            database.insert_question(
+                "texto", NodeEnum.coding.name, "certo", "errado")
+
+        quest = database.get_questions()
+
+        await interaction.response.send_message(quest, ephemeral=True)
 
 
 async def setup(bot: commands.Bot) -> None:

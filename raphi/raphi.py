@@ -4,8 +4,15 @@ from traceback import print_exc
 from typing import List
 
 from discord import Intents, Object
-import discord
 from discord.ext import commands
+
+from raphi.extensions import *
+
+guilds = [
+    Object(id=getenv("UDYR")),
+    Object(id=getenv("TAVERN")),
+    Object(id=getenv("KODY")),
+]
 
 
 class Raphi(commands.Bot):
@@ -25,11 +32,7 @@ class Raphi(commands.Bot):
 
         self.ext = self.get_extensions(self.ext_dir)
 
-        self.glds = [
-            Object(id=getenv("UDYR")),
-            Object(id=getenv("TAVERN")),
-            Object(id=getenv("KODY")),
-        ]
+        self.glds = guilds
 
     async def setup_hook(self) -> None:
         await self.load_modules(self.ext)
