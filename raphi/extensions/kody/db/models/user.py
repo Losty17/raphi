@@ -19,6 +19,7 @@ class User(Base):
     vip = Column(Enum(VipEnum), server_default=VipEnum.none.name)
 
     last_vote = Column(DateTime)
+    last_question = Column(DateTime)
 
     def __repr__(self) -> str:
         return f"<User id={self.id}>"

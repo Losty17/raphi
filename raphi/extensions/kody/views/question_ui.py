@@ -1,7 +1,7 @@
 from random import shuffle
 
 from discord.ui import View
-from raphi.extensions.kody import Question
+from ..question import Question
 
 from . import QuestionButton
 

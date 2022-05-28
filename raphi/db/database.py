@@ -7,9 +7,10 @@ from . import Base
 class DatabaseCore:
     def __init__(self) -> None:
         # self.engine = create_engine('sqlite+aiosqlite:///:memory:', echo=True)
-        self.engine = create_engine('sqlite:///:memory:', echo=True)
+        # self.engine = create_engine('sqlite:///:memory:')  # , echo=True)
+        self.engine = create_engine('sqlite:///data.db')
         Base.metadata.bind = self.engine
-        Session = sessionmaker(bind=Base.metadata.bind)
+        Session = sessionmaker(bind=Base.metadata.bind, autocommit=True)
 
         self.session = Session()
 
