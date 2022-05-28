@@ -19,12 +19,12 @@ def check_permission():
     return app_commands.check(predicate)
 
 
-class Comp(commands.Cog):
+class Kody(commands.Cog):
     def __init__(self, bot: Raphi) -> None:
         self.bot = bot
 
         questions_path = os.path.join(
-            self.bot.res_dir, 'comp', 'questions.json')
+            self.bot.res_dir, 'kody', 'questions.json')
 
         with open(questions_path, 'rb') as file:
             self.questions: List[Dict] = json.loads(file.read())
@@ -66,4 +66,4 @@ class Comp(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(Comp(bot))
+    await bot.add_cog(Kody(bot))
