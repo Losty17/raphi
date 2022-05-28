@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, DateTime
 from .enums import NodeEnum
-from ..base import Base
+from .....db.base import Base
 
 
 class Question(Base):

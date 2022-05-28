@@ -1,69 +1,22 @@
 import json
 import os
-from random import choice, shuffle
-from typing import Dict, List, Optional
+from random import choice
+from typing import Dict, List
 
 import discord
-from discord import Interaction, Object, app_commands
+from discord import Interaction, app_commands
 from discord.ext import commands
-# from raphi import db
 from raphi.raphi import Raphi
-from .db import Database
+from .question import Question
+from .views import QuestionUi
+
+from .db import KodyDatabase
 
 
 def check_permission():
     def predicate(interaction: Interaction) -> bool:
         return interaction.guild.id == 501807001324617748 and interaction.channel.id == 979441373046521937
     return app_commands.check(predicate)
-
-
-class Question:
-    def __init__(self, answers: List[str], right_answer: str, content: str) -> None:
-        self.answers = answers
-        self.right_answer = right_answer
-        self.content = content
-
-    @classmethod
-    def get_question(self, answers: List[str], right_answer: str, content: str):
-        return Question(answers, right_answer, content) if right_answer in answers else None
-
-
-class QuestionButton(discord.ui.Button):
-    def __init__(self, label: str, right_ans: str, buttons: List[discord.ui.Button], view: discord.ui.View, *, style: discord.ButtonStyle = discord.ButtonStyle.grey):
-        super().__init__(style=style, label=label)
-        self.ans = label
-        self.right_ans = right_ans
-        self.buttons = buttons
-        self._view = view
-
-    async def callback(self, interaction: discord.Interaction) -> None:
-        if (self.ans == self.right_ans):
-            self.style = discord.ButtonStyle.green
-            msg = "Você acertou!"
-        else:
-            self.style = discord.ButtonStyle.red
-            msg = "Você errou..."
-
-        for btn in self.buttons:
-            btn.disabled = True
-
-        await interaction.response.edit_message(content=msg, view=self._view)
-
-
-class QuestionUi(discord.ui.View):
-    def __init__(self, question: Question):
-        super().__init__(timeout=60)
-        self.question = question
-        shuffle(self.question.answers)
-        right_ans = self.question.right_answer
-
-        btns = []
-
-        for i in question.answers:
-            btns.append(QuestionButton(i, right_ans, btns, self))
-
-        for btn in btns:
-            self.add_item(btn)
 
 
 class Comp(commands.Cog):
@@ -101,7 +54,7 @@ class Comp(commands.Cog):
     @app_commands.command(name="testdb")
     async def _test_db(self, interaction: discord.Interaction):
         """ Testa o banco de dados """
-        database = Database()
+        database = KodyDatabase()
 
         database.sync()
 

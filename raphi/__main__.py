@@ -1,6 +1,5 @@
 from os import getenv
 
-import discord
 from discord import Intents
 from dotenv import load_dotenv
 

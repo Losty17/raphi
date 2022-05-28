@@ -1,24 +1,11 @@
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
-from .base import Base
+from sqlalchemy import text
 from .models import Question, User
+from raphi.db import DatabaseCore
 
 
-class Database:
+class KodyDatabase(DatabaseCore):
     def __init__(self) -> None:
-        # self.engine = create_engine('sqlite+aiosqlite:///:memory:', echo=True)
-        self.engine = create_engine('sqlite:///:memory:', echo=True)
-        Base.metadata.bind = self.engine
-        Session = sessionmaker(bind=Base.metadata.bind)
-
-        self.session = Session()
-
-    def sync(self):
-        with self.engine.begin() as conn:
-            Base.metadata.drop_all()
-            Base.metadata.create_all()
-            # conn.run(Base.metadata.drop_all)
-            # conn.execute(Base.metadata.create_all)
+        super().__init__()
 
     def create_user(self, _id: int):
         with self.engine.begin() as conn:

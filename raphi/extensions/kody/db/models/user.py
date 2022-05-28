@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Enum, DateTime
 from .enums import VipEnum
-from ..base import Base
+from .....db.base import Base
 
 
 class User(Base):

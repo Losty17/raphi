@@ -5,8 +5,9 @@
       "name": "Python: Módulo",
       "type": "python",
       "request": "launch",
+      "args": ["-B"],
       "module": "raphi",
-      "justMyCode": true
+      "justMyCode": false
     }
   ]
 }
