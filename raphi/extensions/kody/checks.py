@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from discord import Interaction, app_commands
 
 from .db import KodyDatabase
+from .db.models import User
 from .db.models.enums import VipEnum
 
 
@@ -16,7 +17,7 @@ def ensure_user_created(db: KodyDatabase):
     def predicate(interaction: Interaction) -> bool:
         user = db.get_user(interaction.user.id)
         if not user:
-            db.create_user(interaction.user.id)
+            db.create_user(User(id=interaction.user.id))
 
         return True
     return app_commands.check(predicate)
@@ -46,4 +47,11 @@ def check_cooldown(db: KodyDatabase):
         else:
             retry_after = (timedelta(seconds=cd) - diff).total_seconds()
             raise app_commands.CommandOnCooldown(cd, retry_after)
+    return app_commands.check(predicate)
+
+
+def is_staff():
+    def predicate(interaction: Interaction) -> bool:
+        staff_ids = [207947146371006464, 333457501817405442]
+        return interaction.user.id in staff_ids
     return app_commands.check(predicate)

@@ -1,22 +1,25 @@
 from random import shuffle
+from discord import User
 
 from discord.ui import View
-from ..question import Question
+from ..db.models import Question
 
 from . import QuestionButton
 
 
 class QuestionUi(View):
-    def __init__(self, question: Question):
+    def __init__(self, question: Question, *, author: User):
         super().__init__(timeout=60)
-        self.question = question
-        shuffle(self.question.answers)
-        right_ans = self.question.right_answer
+
+        answers = question.get_answers()
+        right_ans = question.right_ans
+        shuffle(answers)
 
         btns = []
-
-        for i in question.answers:
-            btns.append(QuestionButton(i, right_ans, btns, self))
+        for i in answers:
+            if i:
+                btns.append(QuestionButton(
+                    i, question.node.name, right_ans, btns, author=author))
 
         for btn in btns:
             self.add_item(btn)

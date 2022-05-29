@@ -10,11 +10,12 @@ class VipEnum(enum.Enum):
 
 
 class NodeEnum(enum.Enum):
-    web = "web"
-    data = "data"
-    design = "design"
-    coding = "coding"
-    network = "network"
-    robotics = "robotics"
-    hardware = "hardware"
-    software = "software"
+    __order__: str = 'web data design coding network robotics hardware software'
+    web: str = "web"
+    data: str = "data"
+    design: str = "design"
+    coding: str = "coding"
+    network: str = "network"
+    robotics: str = "robotics"
+    hardware: str = "hardware"
+    software: str = "software"

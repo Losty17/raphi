@@ -1,4 +1,5 @@
-from sqlalchemy import text, select, update, values
+from typing import List
+from sqlalchemy import func
 from .models import Question, User
 from raphi.db import DatabaseCore
 
@@ -7,42 +8,27 @@ class KodyDatabase(DatabaseCore):
     def __init__(self) -> None:
         super().__init__()
 
-    def create_user(self, _id: int) -> bool:
-        try:
-            with self.session.begin():
-                user = User(id=_id)
-                self.session.add(user)
-        except Exception as e:
-            return False, e
-        else:
-            return True
+    def create_user(self, user: User) -> User:
+        with self.session.begin():
+            self.session.add(user)
+
+        return user
 
     def get_user(self, _id: int) -> User | None:
         with self.session.begin():
             user = self.session.query(User).filter_by(id=_id).first()
+
         return user
 
-    def update_user_last_question(self, user: User) -> bool:
-        try:
-            with self.session.begin():
-                self.session.execute(
-                    update(User)
-                    .where(User.id == user.id)
-                    .values(last_question=user.last_question)
-                )
-        except Exception as e:
-            return False, e
-        else:
-            return True
+    def add_question(self, question: Question) -> Question:
+        with self.session.begin():
+            self.session.add(question)
 
-    def insert_question(self, _text, node, right_ans, first_ans):
-        with self.engine.begin() as conn:
-            q = text(
-                f'INSERT INTO questions' +
-                f'(text, node, right_ans, first_ans)' +
-                f"VALUES ('{_text}', '{node}', '{right_ans}', '{first_ans}')"
-            )
-            conn.execute(q)
+        return question
+
+    def bulk_add_question(self, questions: List[Question]):
+        with self.session.begin():
+            self.session.bulk_save_objects(questions)
 
     def get_question(self, _id: str) -> Question:
         with self.session.begin():
@@ -53,5 +39,12 @@ class KodyDatabase(DatabaseCore):
     def get_questions(self):
         with self.session.begin():
             questions = self.session.query(Question).all()
+
+        return questions
+
+    def get_random_question(self) -> Question | None:
+        with self.session.begin():
+            questions = self.session.query(Question).order_by(
+                func.random()).limit(1).one_or_none()
 
         return questions
