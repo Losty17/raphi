@@ -4,8 +4,7 @@ from discord import Interaction, SelectOption, TextStyle
 from discord.ui import Select, View, Modal, TextInput
 
 from ..database import db
-from ..db.models import Question
-from ..db.models.enums import NodeEnum
+from ..db.models import Question, NodeEnum, NODE_EMOJIS
 
 
 class NodeModal(Modal):
@@ -65,17 +64,13 @@ class NodeModal(Modal):
     async def on_error(self, interaction: Interaction, error: Exception) -> None:
         await interaction.response.send_message('Oops! Something went wrong.', ephemeral=True)
 
-        # Make sure we know what the error actually is
-        # traceback.print_tb(error.__traceback__)
-
 
 class NodeSelector(Select):
     def __init__(self) -> None:
-        emojis = ['🧭', '📟', '🎨', '💻', '📠', '🤖', '🖱️', '📀']
         options = []
-        for i, n in enumerate(NodeEnum):
+        for n in NodeEnum:
             options.append(SelectOption(
-                label=n.name.capitalize(), emoji=emojis[i], value=n.name))
+                label=n.name.capitalize(), emoji=NODE_EMOJIS[n.name], value=n.name))
 
         super().__init__(
             placeholder="Selecione um node...",
@@ -85,9 +80,6 @@ class NodeSelector(Select):
 
     async def callback(self, interaction: Interaction):
         self.disabled = True
-        self.placeholder = self.values[0]
-
-        # msg = await interaction.edit_original_message(view=self.view)
 
         await interaction.response.send_modal(NodeModal(self.values[0]))
 

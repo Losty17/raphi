@@ -21,12 +21,3 @@ class NodeEnum(Enum):
     software: str = "software"
 
 
-class NodeColors(Enum):
-    web: str = "web"
-    data: str = "data"
-    design: str = "design"
-    coding: str = "coding"
-    network: str = "network"
-    robotics: str = "robotics"
-    hardware: str = "hardware"
-    software: str = "software"
