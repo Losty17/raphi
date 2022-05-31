@@ -8,9 +8,9 @@ from . import Base
 
 class DatabaseCore:
     def __init__(self) -> None:
-        # self.engine = create_engine('sqlite+aiosqlite:///:memory:', echo=True)
-        # self.engine = create_engine('sqlite:///:memory:')  # , echo=True)
-        self.engine = create_engine(getenv("DATABASE_URI"))
+        db_uri = getenv("DATABASE_URI") if getenv(
+            "ENVIRONMENT").lower() == "production" else "sqlite:///:memory:"
+        self.engine = create_engine(db_uri)
         Base.metadata.bind = self.engine
         Session = sessionmaker(bind=Base.metadata.bind, autocommit=True)
 

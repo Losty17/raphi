@@ -6,15 +6,15 @@ from raphi.db.base import Base
 
 class Question(Base):
     __tablename__ = 'questions'
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id: int = Column(Integer, primary_key=True, autoincrement=True)
 
-    node = Column(Enum(NodeEnum), nullable=False)
-    text = Column(String(200), nullable=False)
+    node: NodeEnum = Column(Enum(NodeEnum), nullable=False)
+    text: str = Column(String(200), nullable=False)
 
-    right_ans = Column(String(200), nullable=False)
-    first_ans = Column(String(200), nullable=False)
-    second_ans = Column(String(200), server_default='')
-    third_ans = Column(String(200), server_default='')
+    right_ans: str = Column(String(200), nullable=False)
+    first_ans: str = Column(String(200), nullable=False)
+    second_ans: str = Column(String(200), server_default='')
+    third_ans: str = Column(String(200), server_default='')
 
     def __repr__(self) -> str:
         return f"<Question id={self.id} node={self.node}>"

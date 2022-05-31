@@ -11,6 +11,7 @@ from .checks import *
 from .database import db
 from .db.models import Question
 from .views import QuestionUi
+from .embed import QuestionEmbed
 
 
 class Kody(commands.Cog):
@@ -36,8 +37,11 @@ class Kody(commands.Cog):
         user.last_question = datetime.utcnow()
 
         question = db.get_random_question()
+
         if question:
-            await interaction.followup.send(question.text, view=QuestionUi(question, author=interaction.user))
+            question_embed = QuestionEmbed(question)
+
+            await interaction.followup.send(embed=question_embed, view=QuestionUi(question, author=interaction.user))
         else:
             await interaction.followup.send("Ocorreu um erro ao procurar uma questão.", ephemeral=True)
 

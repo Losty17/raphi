@@ -4,9 +4,10 @@ from discord import Intents
 from dotenv import load_dotenv
 
 from .raphi import Raphi
-from . import bot
 
 load_dotenv()
 
+intents = Intents.all()
 
-bot.run(getenv("BOT_TOKEN"))
+bot = Raphi("$", intents=intents, application_id=getenv(
+    "APP_ID"), owner_id=getenv("OWNER_ID"))
